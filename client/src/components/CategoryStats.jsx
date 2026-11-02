@@ -17,7 +17,6 @@ import {
   PieChart as PieIcon,
   BarChart3,
   Layers,
-  ArrowRight,
   Sparkles
 } from 'lucide-react';
 import CategoryIcon from './CategoryIcon';
@@ -44,7 +43,6 @@ export default function CategoryStats({
   const categories = activeType === 'expense' ? expenseCategories : incomeCategories;
   const currentTotal = activeType === 'expense' ? totalExpense : totalIncome;
 
-  // Chuẩn bị dữ liệu cho Recharts
   const chartData = categories.map((cat, idx) => ({
     name: cat.category_name,
     value: cat.total_amount,
@@ -55,30 +53,25 @@ export default function CategoryStats({
     id: cat.category_id
   }));
 
-  // Custom tooltip cho Recharts
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl border border-slate-700 text-xs z-50">
-          <div className="flex items-center gap-2 mb-1.5 font-bold text-sm">
+        <div className="bg-slate-900 text-white p-2.5 rounded-xl shadow-xl border border-slate-700 text-xs z-50">
+          <div className="flex items-center gap-1.5 mb-1 font-bold">
             <span
-              className="w-3 h-3 rounded-full inline-block"
+              className="w-2.5 h-2.5 rounded-full inline-block"
               style={{ backgroundColor: data.color }}
             />
             {data.name}
           </div>
-          <div className="flex justify-between gap-4 text-slate-300">
-            <span>Số tiền:</span>
+          <div className="flex justify-between gap-3 text-slate-300">
+            <span>Tiền:</span>
             <span className="font-bold text-white">{formatVND(data.value)}</span>
           </div>
-          <div className="flex justify-between gap-4 text-slate-300">
+          <div className="flex justify-between gap-3 text-slate-300">
             <span>Tỷ trọng:</span>
             <span className="font-bold text-emerald-400">{data.percentage}%</span>
-          </div>
-          <div className="flex justify-between gap-4 text-slate-300">
-            <span>Số giao dịch:</span>
-            <span className="font-medium text-slate-200">{data.count}</span>
           </div>
         </div>
       );
@@ -87,41 +80,41 @@ export default function CategoryStats({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 border border-slate-200/80 dark:border-slate-800 shadow-sm mb-6 transition-all">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs mb-4 sm:mb-6 transition-all">
       
       {/* HEADER: TIÊU ĐỀ & NÚT CHUYỂN ĐỔI */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 sm:pb-5 border-b border-slate-100 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2">
-            <div className={`p-2 rounded-xl ${
+            <div className={`p-1.5 sm:p-2 rounded-xl shrink-0 ${
               activeType === 'expense'
                 ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
                 : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
             }`}>
-              {activeType === 'expense' ? <TrendingDown className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />}
+              {activeType === 'expense' ? <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5" /> : <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />}
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                {activeType === 'expense' ? 'Thống Kê Chi Tiêu Theo Loại Tiền' : 'Thống Kê Nguồn Thu Nhập'}
+              <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                {activeType === 'expense' ? 'Thống Kê Chi Tiêu Theo Loại' : 'Thống Kê Nguồn Thu Nhập'}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Phân tích tỷ trọng và chi tiết từng danh mục ({periodLabel})
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                Tỷ trọng từng danh mục ({periodLabel})
               </p>
             </div>
           </div>
         </div>
 
         {/* Nút điều khiển: Thu/Chi & Dạng biểu đồ */}
-        <div className="flex items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-start">
+        <div className="flex items-center gap-1.5 self-stretch sm:self-auto justify-between sm:justify-start">
           
           {/* Chuyển Chi tiêu / Thu nhập */}
-          <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-semibold">
+          <div className="flex p-0.5 sm:p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold">
             <button
               onClick={() => setActiveType('expense')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all ${
                 activeType === 'expense'
-                  ? 'bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-slate-700 text-rose-600 dark:text-rose-400 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
               }`}
             >
               <TrendingDown className="w-3.5 h-3.5" />
@@ -129,10 +122,10 @@ export default function CategoryStats({
             </button>
             <button
               onClick={() => setActiveType('income')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+              className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all ${
                 activeType === 'income'
-                  ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
               }`}
             >
               <TrendingUp className="w-3.5 h-3.5" />
@@ -141,53 +134,53 @@ export default function CategoryStats({
           </div>
 
           {/* Chuyển dạng biểu đồ Donut / Bar */}
-          <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">
+          <div className="flex p-0.5 sm:p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs">
             <button
               onClick={() => setChartType('donut')}
-              title="Biểu đồ tròn (Tỷ trọng)"
+              title="Biểu đồ tròn"
               className={`p-1.5 rounded-lg transition-all ${
                 chartType === 'donut'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs'
+                  : 'text-slate-400'
               }`}
             >
-              <PieIcon className="w-4 h-4" />
+              <PieIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={() => setChartType('bar')}
-              title="Biểu đồ cột (So sánh)"
+              title="Biểu đồ cột"
               className={`p-1.5 rounded-lg transition-all ${
                 chartType === 'bar'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'
+                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs'
+                  : 'text-slate-400'
               }`}
             >
-              <BarChart3 className="w-4 h-4" />
+              <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* NỘI DUNG CHÍNH: BIỂU ĐỒ & BẢNG DANH MỤC CHI TIẾT */}
+      {/* NỘI DUNG CHÍNH */}
       {categories.length === 0 ? (
-        <div className="py-16 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
-            <Layers className="w-8 h-8" />
+        <div className="py-12 text-center">
+          <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+            <Layers className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-slate-700 dark:text-slate-300">
-            Chưa có giao dịch {activeType === 'expense' ? 'chi tiêu' : 'thu nhập'} nào trong khoảng thời gian này
+          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">
+            Chưa có giao dịch {activeType === 'expense' ? 'chi tiêu' : 'thu nhập'}
           </h3>
-          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Hãy chọn khoảng thời gian khác hoặc nhấn "Thêm thu / chi" ở góc trên để bắt đầu ghi chép.
+          <p className="text-xs text-slate-400 mt-1">
+            Nhấn nút "+" ở dưới để thêm giao dịch đầu tiên.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 pt-4 sm:pt-6 items-center">
           
-          {/* CỘT TRÁI: BIỂU ĐỒ TRỰC QUAN (5 COLS TRÊN DESKTOP) */}
+          {/* CỘT TRÁI: BIỂU ĐỒ TRỰC QUAN */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center relative">
-            <div className="w-full h-72 sm:h-80 relative flex items-center justify-center">
+            <div className="w-full h-56 sm:h-80 relative flex items-center justify-center">
               
               {chartType === 'donut' ? (
                 <>
@@ -197,8 +190,8 @@ export default function CategoryStats({
                         data={chartData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={75}
-                        outerRadius={115}
+                        innerRadius={60}
+                        outerRadius={95}
                         paddingAngle={3}
                         dataKey="value"
                         onMouseEnter={(_, index) => setHoveredCategory(chartData[index])}
@@ -216,60 +209,59 @@ export default function CategoryStats({
                     </PieChart>
                   </ResponsiveContainer>
 
-                  {/* Tâm biểu đồ tròn: Hiển thị tổng tiền hoặc danh mục đang hover */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4">
+                  {/* Tâm biểu đồ tròn */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-2">
                     {hoveredCategory ? (
                       <>
-                        <span className="text-xs font-semibold text-slate-400 truncate max-w-[140px]">
+                        <span className="text-[11px] font-bold text-slate-400 truncate max-w-[120px]">
                           {hoveredCategory.name}
                         </span>
-                        <span className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                        <span className="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
                           {formatVND(hoveredCategory.value)}
                         </span>
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full mt-1 bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400">
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full mt-0.5 bg-slate-100 dark:bg-slate-800 text-blue-600 dark:text-blue-400">
                           {hoveredCategory.percentage}%
                         </span>
                       </>
                     ) : (
                       <>
-                        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                          {activeType === 'expense' ? 'Tổng Chi Tiêu' : 'Tổng Thu Nhập'}
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          {activeType === 'expense' ? 'Tổng Chi' : 'Tổng Thu'}
                         </span>
-                        <span className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                        <span className="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
                           {formatVND(currentTotal)}
                         </span>
-                        <span className="text-[11px] text-slate-400 mt-0.5">
-                          {categories.length} danh mục
+                        <span className="text-[10px] text-slate-400">
+                          {categories.length} loại
                         </span>
                       </>
                     )}
                   </div>
                 </>
               ) : (
-                /* Biểu đồ cột Bar Chart */
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={chartData.slice(0, 7)}
+                    data={chartData.slice(0, 6)}
                     layout="vertical"
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} opacity={0.15} />
                     <XAxis
                       type="number"
                       tickFormatter={(val) => formatCompactVND(val)}
-                      fontSize={11}
+                      fontSize={10}
                       stroke="#94a3b8"
                     />
                     <YAxis
                       dataKey="name"
                       type="category"
-                      width={100}
-                      fontSize={11}
+                      width={85}
+                      fontSize={10}
                       stroke="#94a3b8"
                       tickLine={false}
                     />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="value" radius={[0, 8, 8, 0]}>
+                    <Bar dataKey="value" radius={[0, 6, 6, 0]}>
                       {chartData.map((entry, index) => (
                         <Cell key={`bar-${index}`} fill={entry.color} />
                       ))}
@@ -279,24 +271,20 @@ export default function CategoryStats({
               )}
 
             </div>
-
-            <div className="mt-2 text-center text-xs text-slate-400 italic">
-              * Di chuột hoặc chạm vào từng phần để xem số liệu chi tiết
-            </div>
           </div>
 
-          {/* CỘT PHẢI: BẢNG XẾP HẠNG & CHI TIẾT TỪNG LOẠI TIỀN (7 COLS) */}
+          {/* CỘT PHẢI: BẢNG XẾP HẠNG & CHI TIẾT TỪNG LOẠI */}
           <div className="lg:col-span-7">
-            <div className="flex items-center justify-between mb-3 text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
-              <span>Hạng / Loại tiền</span>
-              <div className="flex gap-8">
+            <div className="flex items-center justify-between mb-2 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
+              <span>Hạng & Loại tiền</span>
+              <div className="flex gap-6 sm:gap-8">
                 <span>Tỷ trọng</span>
                 <span>Số tiền</span>
               </div>
             </div>
 
             {/* Danh sách các danh mục */}
-            <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[340px] overflow-y-auto pr-0.5">
               {categories.map((cat, idx) => {
                 const color = cat.category_color || DEFAULT_COLORS[idx % DEFAULT_COLORS.length];
                 const isHovered = hoveredCategory?.name === cat.category_name;
@@ -311,49 +299,49 @@ export default function CategoryStats({
                     })}
                     onMouseLeave={() => setHoveredCategory(null)}
                     onClick={() => onSelectCategoryFilter && onSelectCategoryFilter(cat.category_id)}
-                    className={`group p-3 rounded-2xl border transition-all cursor-pointer ${
+                    className={`group p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border transition-all cursor-pointer ${
                       isHovered
-                        ? 'bg-blue-50/70 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 shadow-sm translate-x-1'
-                        : 'bg-slate-50/70 dark:bg-slate-800/50 border-slate-200/60 dark:border-slate-800 hover:bg-slate-100/80 dark:hover:bg-slate-800'
+                        ? 'bg-blue-50/70 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 shadow-xs'
+                        : 'bg-slate-50/70 dark:bg-slate-800/50 border-slate-200/60 dark:border-slate-800'
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center justify-between gap-2">
                       
                       {/* Xếp hạng & Tên danh mục & Icon */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className={`w-5 text-center text-xs font-extrabold ${
-                          idx === 0 ? 'text-amber-500 font-black' : idx === 1 ? 'text-slate-400' : idx === 2 ? 'text-amber-700' : 'text-slate-400'
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`w-4 text-center text-xs font-black ${
+                          idx === 0 ? 'text-amber-500' : idx === 1 ? 'text-slate-400' : idx === 2 ? 'text-amber-700' : 'text-slate-400'
                         }`}>
                           #{idx + 1}
                         </span>
 
                         <div
-                          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-                          style={{ backgroundColor: `${color}18`, color: color }}
+                          className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs"
+                          style={{ backgroundColor: `${color}18`, color }}
                         >
                           <CategoryIcon name={cat.category_icon} className="w-4 h-4" />
                         </div>
 
                         <div className="min-w-0">
-                          <div className="font-bold text-sm text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          <div className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 truncate">
                             {cat.category_name}
                           </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                            {cat.transaction_count} giao dịch
+                          <div className="text-[10px] text-slate-400">
+                            {cat.transaction_count} gd
                           </div>
                         </div>
                       </div>
 
                       {/* Tỷ lệ % & Số tiền VND */}
-                      <div className="flex items-center gap-4 shrink-0 text-right">
+                      <div className="flex items-center gap-2.5 sm:gap-4 shrink-0 text-right">
                         <span
-                          className="text-xs font-bold px-2 py-0.5 rounded-full"
-                          style={{ backgroundColor: `${color}20`, color: color }}
+                          className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full"
+                          style={{ backgroundColor: `${color}20`, color }}
                         >
                           {cat.percentage}%
                         </span>
 
-                        <div className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white">
+                        <div className="font-black text-xs sm:text-base text-slate-900 dark:text-white">
                           {formatVND(cat.total_amount)}
                         </div>
                       </div>
@@ -361,7 +349,7 @@ export default function CategoryStats({
                     </div>
 
                     {/* Thanh tiến độ trực quan */}
-                    <div className="w-full bg-slate-200/80 dark:bg-slate-700/60 rounded-full h-1.5 mt-2.5 overflow-hidden">
+                    <div className="w-full bg-slate-200/80 dark:bg-slate-700/60 rounded-full h-1 mt-2 overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -375,12 +363,8 @@ export default function CategoryStats({
               })}
             </div>
 
-            {/* Chú thích lọc */}
-            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 px-1">
-              <span>* Nhấp vào một danh mục để lọc các giao dịch liên quan</span>
-              <span className="flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400">
-                <Sparkles className="w-3 h-3" /> Tự động tính toán
-              </span>
+            <div className="mt-2.5 text-center text-[10px] text-slate-400">
+              * Chạm vào danh mục để lọc các giao dịch tương ứng
             </div>
 
           </div>

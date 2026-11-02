@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
+import BottomNav from './components/BottomNav';
 import OverviewCards from './components/OverviewCards';
 import CategoryStats from './components/CategoryStats';
 import TrendChart from './components/TrendChart';
@@ -9,13 +10,13 @@ import BudgetSection from './components/BudgetSection';
 import CategoryManagerModal from './components/CategoryManagerModal';
 import DataToolsModal from './components/DataToolsModal';
 import { api } from './services/api';
-import { getDatePresets, formatDateISO } from './utils/formatters';
+import { getDatePresets } from './utils/formatters';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function App() {
   const presets = getDatePresets();
 
-  // Dark mode state
+  // Dark mode
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem('dailymoney_theme') === 'dark';
   });
@@ -75,10 +76,9 @@ export default function App() {
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
+    setTimeout(() => setToast(null), 3000);
   };
 
-  // Cập nhật khoảng ngày khi chọn preset
   const handleSelectPreset = (presetId) => {
     setSelectedPreset(presetId);
     const p = presets.find((item) => item.id === presetId);
@@ -93,7 +93,6 @@ export default function App() {
     }
   };
 
-  // Nạp toàn bộ dữ liệu từ backend
   const loadAllData = useCallback(async () => {
     try {
       const statsParams = {
@@ -103,7 +102,6 @@ export default function App() {
         prevEndDate: dateRange.prevEndDate
       };
 
-      // Tải song song để tốc độ tải trang nhanh nhất
       const [
         overviewRes,
         expenseCatRes,
@@ -138,11 +136,10 @@ export default function App() {
     loadAllData();
   }, [loadAllData]);
 
-  // Xử lý Giao dịch
   const handleSaveTransaction = async (txData) => {
     if (txData.id) {
       await api.updateTransaction(txData.id, txData);
-      showToast('Đã cập nhật giao dịch thành công!');
+      showToast('Đã cập nhật giao dịch!');
     } else {
       await api.createTransaction(txData);
       showToast('Đã thêm giao dịch thành công!');
@@ -157,7 +154,7 @@ export default function App() {
         showToast('Đã xóa giao dịch.');
         loadAllData();
       } catch (err) {
-        showToast(err.message || 'Lỗi khi xóa giao dịch', 'error');
+        showToast(err.message || 'Lỗi khi xóa', 'error');
       }
     }
   };
@@ -167,30 +164,28 @@ export default function App() {
     setIsTransactionModalOpen(true);
   };
 
-  // Xử lý Ngân sách
   const handleSaveBudget = async (budgetData) => {
     try {
       await api.saveBudget(budgetData);
       showToast('Đã lưu hạn mức ngân sách!');
       loadAllData();
     } catch (err) {
-      showToast(err.message || 'Lỗi khi lưu ngân sách', 'error');
+      showToast(err.message || 'Lỗi khi lưu', 'error');
     }
   };
 
   const handleDeleteBudget = async (id) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa hạn mức ngân sách này?')) {
+    if (window.confirm('Bạn có chắc muốn xóa hạn mức này?')) {
       try {
         await api.deleteBudget(id);
         showToast('Đã xóa ngân sách.');
         loadAllData();
       } catch (err) {
-        showToast(err.message || 'Lỗi khi xóa ngân sách', 'error');
+        showToast(err.message || 'Lỗi khi xóa', 'error');
       }
     }
   };
 
-  // Xử lý Danh mục
   const handleCreateCategory = async (catData) => {
     await api.createCategory(catData);
     showToast(`Đã thêm danh mục "${catData.name}"!`);
@@ -203,11 +198,10 @@ export default function App() {
     loadAllData();
   };
 
-  // Nhấp vào danh mục trong bảng thống kê -> Lọc danh sách giao dịch
   const handleSelectCategoryFromStats = (catId) => {
     setCategoryFilter(String(catId));
     setActiveTab('transactions');
-    showToast('Đã lọc sổ giao dịch theo danh mục được chọn.');
+    showToast('Đã lọc theo danh mục.');
   };
 
   return (
@@ -215,17 +209,17 @@ export default function App() {
       
       {/* Toast Notification */}
       {toast && (
-        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900 text-white text-xs sm:text-sm font-semibold shadow-2xl border border-slate-700 animate-in slide-in-from-bottom-5">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-900/95 text-white text-xs font-bold shadow-xl border border-slate-700 animate-in slide-in-from-top-4">
           {toast.type === 'error' ? (
-            <AlertCircle className="w-4 h-4 text-rose-400" />
+            <AlertCircle className="w-3.5 h-3.5 text-rose-400" />
           ) : (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
           )}
           <span>{toast.message}</span>
         </div>
       )}
 
-      {/* NAVBAR */}
+      {/* NAVBAR TRÊN CÙNG */}
       <Navbar
         selectedPreset={selectedPreset}
         onSelectPreset={handleSelectPreset}
@@ -241,19 +235,19 @@ export default function App() {
         onToggleDark={() => setIsDark(!isDark)}
       />
 
-      {/* MAIN CONTAINER */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      {/* CONTAINER CHÍNH (Đệm dưới pb-24 để không bị thanh BottomNav che) */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-8 pb-24 sm:pb-12">
         
-        {/* TAB 1: DASHBOARD (TỔNG QUAN & THỐNG KÊ CHI TIẾT) */}
+        {/* TAB 1: DASHBOARD */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            {/* THẺ TỔNG QUAN: TỔNG THU, TỔNG CHI, SỐ DƯ, TỶ LỆ TIẾT KIỆM */}
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-200">
+            {/* THẺ TỔNG QUAN 2x2 TRÊN MOBILE */}
             <OverviewCards
               stats={overviewStats}
               periodLabel={dateRange.label}
             />
 
-            {/* THỐNG KÊ MỖI LOẠI TIỀN TIÊU & TỔNG THU NHẬP (TRỌNG TÂM YÊU CẦU CỦA USER) */}
+            {/* THỐNG KÊ MỖI LOẠI TIỀN TIÊU & TỔNG THU NHẬP */}
             <CategoryStats
               expenseCategories={expenseCategories}
               incomeCategories={incomeCategories}
@@ -263,7 +257,7 @@ export default function App() {
               onSelectCategoryFilter={handleSelectCategoryFromStats}
             />
 
-            {/* BIỂU ĐỒ BIẾN ĐỘNG THU CHI THEO THỜI GIAN */}
+            {/* BIỂU ĐỒ BIẾN ĐỘNG THU CHI */}
             <TrendChart
               trendData={trendData}
               periodLabel={dateRange.label}
@@ -285,9 +279,9 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: SỔ GIAO DỊCH TOÀN BỘ */}
+        {/* TAB 2: SỔ GIAO DỊCH */}
         {activeTab === 'transactions' && (
-          <div className="animate-in fade-in duration-300">
+          <div className="animate-in fade-in duration-200">
             <TransactionList
               transactions={transactions}
               categories={categories}
@@ -303,9 +297,9 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 3: HẠN MỨC NGÂN SÁCH */}
+        {/* TAB 3: NGÂN SÁCH */}
         {activeTab === 'budgets' && (
-          <div className="animate-in fade-in duration-300">
+          <div className="animate-in fade-in duration-200">
             <BudgetSection
               budgets={budgets}
               categories={categories}
@@ -319,10 +313,16 @@ export default function App() {
 
       </main>
 
-      {/* FOOTER */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-400">
-        <p>DailyMoney - Website Quản Lý Chi Tiêu & Thống Kê Thu Nhập Hàng Ngày</p>
-      </footer>
+      {/* THANH ĐIỀU HƯỚNG DƯỚI ĐÁY DÀNH CHO MOBILE */}
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onOpenAddModal={() => {
+          setEditingTransaction(null);
+          setIsTransactionModalOpen(true);
+        }}
+        onOpenDataModal={() => setIsDataModalOpen(true)}
+      />
 
       {/* MODALS */}
       <TransactionModal
